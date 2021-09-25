@@ -55,7 +55,7 @@
     asm_zeros:
         mov r2, 0               @ r2 = 0 para tener un cero disponible en un registro
     .asm_zero_loop:
-        str r2,[r0],4         @ vector[i] = 0 ó *vector++ = 0
+        str r2,[r0],4           @ vector[i] = 0 ó *vector++ = 0
         subs r1, #1             @ longitud--
         bne .asm_zero_loop      @ salir si longitud != 0
 
