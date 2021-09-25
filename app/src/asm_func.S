@@ -5,6 +5,7 @@
 @ Simbolos exportados
 .global asm_sum
 .global asm_svc
+.global asm_zeros
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -40,3 +41,24 @@
     asm_svc:
         svc 0
         bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_zeros (uint32_t *vector, uint32_t longitud)
+@
+@ Parametros recibidos:
+@   r0: vector
+@   r1: longitud
+@
+@
+.thumb_func
+    asm_zeros:
+        mov r2, 0               @ r2 = 0 para tener un cero disponible en un registro
+    .asm_zero_loop:
+        str r2,[r0],4         @ vector[i] = 0 ó *vector++ = 0
+        subs r1, #1             @ longitud--
+        bne .asm_zero_loop      @ salir si longitud != 0
+
+        bx lr                   @ vuelve adonde fue llamada
+
+    

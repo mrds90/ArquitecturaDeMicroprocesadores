@@ -28,6 +28,12 @@ void SysTick_Handler (void)
     ++ s_ticks;
 }
 
+static void Zeros (void)
+{
+    uint32_t vector[0xF] = {0xC};
+    asm_zeros(vector, 0xF);
+    c_zeros(vector, 0xF);
+}
 
 static void Suma (void)
 {
@@ -144,7 +150,8 @@ int main (void)
 {
     Inicio ();
 
-    Suma ();
+    Zeros();
+    // Suma ();
 
     PrivilegiosSVC ();
 
