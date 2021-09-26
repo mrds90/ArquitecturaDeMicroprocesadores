@@ -6,7 +6,7 @@
 .global asm_sum
 .global asm_svc
 .global asm_zeros
-.global asm_product
+.global asm_productoEscalar32
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -75,7 +75,7 @@
 @
 @
 .thumb_func
-    asm_product:
+    asm_productoEscalar32:
         push {r4}               @ r2 = 0 para tener un cero disponible en un registro
     .asm_product_loop:
         ldr r4,[r0], #4       @ vectorIn++

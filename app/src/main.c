@@ -37,10 +37,15 @@ static void Zeros (void)
 
 static void Product (void)
 {
-    uint32_t vectorIn[0xF] = {0xC};
-    uint32_t vectorOut[0xF];
-    asm_productoEscalar32(vectorIn, vectorOut, 0xF, 5);
-    c_productoEscalar32(vectorIn, vectorOut, 0xF, 5);
+    uint32_t vectorIn[1000];
+    uint32_t vectorOut[1000];
+    uint32_t i;
+    for (i = 0; i < 1000; ++i) {
+        vectorIn[i] = i;
+        vectorOut[i] = 0;
+    }
+    asm_productoEscalar32(vectorIn, vectorOut, 1000, 2);
+    c_productoEscalar32(vectorIn, vectorOut, 1000, 2);
 }
 
 static void Suma (void)
@@ -158,8 +163,9 @@ int main (void)
 {
     Inicio ();
 
-    Zeros();
+    // Zeros();
     // Suma ();
+    Product();
 
     PrivilegiosSVC ();
 
