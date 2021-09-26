@@ -35,6 +35,14 @@ static void Zeros (void)
     c_zeros(vector, 0xF);
 }
 
+static void Product (void)
+{
+    uint32_t vectorIn[0xF] = {0xC};
+    uint32_t vectorOut[0xF];
+    asm_productoEscalar32(vectorIn, vectorOut, 0xF, 5);
+    c_productoEscalar32(vectorIn, vectorOut, 0xF, 5);
+}
+
 static void Suma (void)
 {
     const uint32_t A = 20;

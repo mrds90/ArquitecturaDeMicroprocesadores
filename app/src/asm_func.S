@@ -6,6 +6,7 @@
 .global asm_sum
 .global asm_svc
 .global asm_zeros
+.global asm_product
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -62,3 +63,25 @@
         bx lr                   @ vuelve adonde fue llamada
 
     
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_productoEscalar32 (uint32_t * vectorIn, uint32_t * vectorOut uint32_t longitud, uint32_t escalar);
+@
+@ Parametros recibidos:
+@   r0: vectorIn
+@   r1: vectorOut
+@   r2: longitud
+@   r3: escalar
+@
+@
+.thumb_func
+    asm_product:
+        push {r4}               @ r2 = 0 para tener un cero disponible en un registro
+    .asm_product_loop:
+        ldr r4,[r0], #4       @ vectorIn++
+        mul r4, r3, r4        @ vectorOut[i] = escalar * vectorIn[i]
+        str r4,[r1],4         @ vector[i] = 0 ó *vector++ = 0
+        subs r2, #1           @ longitud--
+        bne .asm_product_loop @ salir si longitud != 0
+        pop {r4}
+        bx lr                 @ vuelve adonde fue llamada
