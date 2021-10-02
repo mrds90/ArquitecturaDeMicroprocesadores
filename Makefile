@@ -34,7 +34,8 @@ ifeq ($(SEMIHOST),y)
 LDFLAGS+=--specs=rdimon.specs
 endif
 
-CROSS=/home/marcos/CIAA/CIAA_Software_1.1-linux-x64/tools/gcc-arm-embedded/bin/arm-none-eabi-
+CROSS=~/CIAA_Software_1.1-linux-x64/tools/gcc-arm-embedded/bin/arm-none-eabi-
+# CROSS=arm-none-eabi-
 CC=$(CROSS)gcc
 AS=$(CROSS)gcc
 LD=$(CROSS)gcc
@@ -42,7 +43,7 @@ SIZE=$(CROSS)size
 LIST=$(CROSS)objdump -xdS
 OBJCOPY=$(CROSS)objcopy
 GDB=$(CROSS)gdb
-OOCD=/home/marcos/CIAA/CIAA_Software_1.1-linux-x64/tools/openocd/bin/openocd
+OOCD=/openocd
 
 OOCD_SCRIPT?=lib/ciaa-nxp.cfg
 
