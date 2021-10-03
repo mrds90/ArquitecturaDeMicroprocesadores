@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include <stdnoreturn.h>
 
+#define DWT_CONTROL             (*((volatile uint32_t*)0xE0001000))
+#define DWT_CYCCNT              (*((volatile uint32_t*)0xE0001004))
+#define DWT_CYCCNTENA_BIT       (1UL<<0)
+
+#define EnableCycleCounter()    DWT_CONTROL |= DWT_CYCCNTENA_BIT
+#define GetCycleCounter()       DWT_CYCCNT
+#define ResetCycleCounter()     DWT_CYCCNT = 0
+#define DisableCycleCounter()   DWT_CONTROL &= ~DWT_CYCCNTENA_BIT
 
 // Variable que se incrementa cada vez que se llama al handler de interrupcion
 // del SYSTICK.
@@ -49,7 +57,8 @@ static void Product32 (void)
 }
 
 static void Product16 (void)
-{
+{   uint32_t lectura;
+    
     uint16_t vectorIn[1000];
     uint16_t vectorOut[1000];
     uint32_t i;
@@ -57,8 +66,16 @@ static void Product16 (void)
         vectorIn[i] = i;
         vectorOut[i] = 0;
     }
+
+    EnableCycleCounter();
+    ResetCycleCounter();
     asm_productoEscalar16(vectorIn, vectorOut, 1000, 2);
+    lectura = GetCycleCounter();
+    ResetCycleCounter();
     c_productoEscalar16(vectorIn, vectorOut, 1000, 2);
+    lectura = GetCycleCounter();
+    ResetCycleCounter();
+    DisableCycleCounter();
 }
 
 static void Suma (void)
