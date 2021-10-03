@@ -106,7 +106,7 @@
 	.productoEscalar16_loop:
 		ldrh	r4,[r0],2	                @ r4 = r0* ; r0*+2
 		mul		r4,r3		                @ r4 = r4 * r3
-		str		r4,[r1],2	                @ r1* = r4 ; r1*+2
+		strh		r4,[r1],2	                @ r1* = r4 ; r1*+2
 		subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
 		bne		.productoEscalar16_loop	    @ salir si longitud == 0
 
@@ -132,7 +132,7 @@
 		ldrh	r4,[r0],2	                @ r4 = r0* ; r0*+2
 		mul		r4,r3		                @ r4 = r4 * r3
         usat    r4,12,r4                    @ r4 = r4 & 0xFFF
-		str		r4,[r1],2	                @ r1* = r4 ; r1*+2
+		strh	r4,[r1],2	                @ r1* = r4 ; r1*+2
 		subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
 		bne		.productoEscalar12_loop	    @ salir si longitud == 0
 
