@@ -8,6 +8,7 @@
 .global asm_zeros
 .global asm_productoEscalar32
 .global asm_productoEscalar16
+.global asm_productoEscalar12
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -108,6 +109,32 @@
 		str		r4,[r1],2	                @ r1* = r4 ; r1*+2
 		subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
 		bne		.productoEscalar16_loop	    @ salir si longitud == 0
+
+		pop {r4}
+
+		bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@   void asm_productoEscalar12 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitud, uint16_t escalar)
+@
+.thumb_func
+	asm_productoEscalar12:
+		@ Registros usados
+		@ r0: vectorIn
+		@ r1: vectorOut
+		@ r2: longitud
+		@ r3: escalar
+
+		push {r4}
+
+	.productoEscalar12_loop:
+		ldrh	r4,[r0],2	                @ r4 = r0* ; r0*+2
+		mul		r4,r3		                @ r4 = r4 * r3
+        usat    r4,12,r4                    @ r4 = r4 & 0xFFF
+		str		r4,[r1],2	                @ r1* = r4 ; r1*+2
+		subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
+		bne		.productoEscalar12_loop	    @ salir si longitud == 0
 
 		pop {r4}
 

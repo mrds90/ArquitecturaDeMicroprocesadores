@@ -78,6 +78,29 @@ static void Product16 (void)
     DisableCycleCounter();
 }
 
+
+static void Product12 (void)
+{   uint32_t lectura;
+    
+    uint16_t vectorIn[1000];
+    uint16_t vectorOut[1000];
+    uint32_t i;
+    for (i = 0; i < 1000; ++i) {
+        vectorIn[i] = i;
+        vectorOut[i] = 0;
+    }
+
+    EnableCycleCounter();
+    ResetCycleCounter();
+    asm_productoEscalar12(vectorIn, vectorOut, 1000, 2);
+    lectura = GetCycleCounter();
+    ResetCycleCounter();
+    c_productoEscalar12(vectorIn, vectorOut, 1000, 2);
+    lectura = GetCycleCounter();
+    ResetCycleCounter();
+    DisableCycleCounter();
+}
+
 static void Suma (void)
 {
     const uint32_t A = 20;
