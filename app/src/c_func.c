@@ -31,6 +31,9 @@ void c_productoEscalar16 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t lo
 void c_productoEscalar12 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitud, uint16_t escalar) {
     uint16_t i;
     for (i = 0; i < longitud; i++) {
-        vectorOut[i] = MASK_12_BIT & (vectorIn[i] * escalar);
+        vectorOut[i] = vectorIn[i] * escalar;
+        if (vectorOut[i] > MASK_12_BIT) {
+            vectorOut[i] = MASK_12_BIT;
+        }
     }
 }
