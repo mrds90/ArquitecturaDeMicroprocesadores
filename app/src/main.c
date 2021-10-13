@@ -7,12 +7,13 @@
 
 #define DWT_CONTROL             (*((volatile uint32_t*)0xE0001000))
 #define DWT_CYCCNT              (*((volatile uint32_t*)0xE0001004))
-#define DWT_CYCCNTENA_BIT       (1UL<<0)
-
-#define EnableCycleCounter()    DWT_CONTROL |= DWT_CYCCNTENA_BIT
+#define DWT_CYCCNT_ENA_BIT      (1UL<<0)
+#define DWT_DEMCR               (*((volatile uint32_t*)0xE000EDFC))
+#define DWT_DEMCR_TRC_ENA_BIT   (1UL<<24)
+#define EnableCycleCounter()    DWT_CONTROL |= DWT_CYCCNT_ENA_BIT ; DWT_DEMCR |= DWT_DEMCR_TRC_ENA_BIT;
 #define GetCycleCounter()       DWT_CYCCNT
 #define ResetCycleCounter()     DWT_CYCCNT = 0
-#define DisableCycleCounter()   DWT_CONTROL &= ~DWT_CYCCNTENA_BIT
+#define DisableCycleCounter()   DWT_CONTROL &= ~DWT_CYCCNT_ENA_BIT
 
 // Variable que se incrementa cada vez que se llama al handler de interrupcion
 // del SYSTICK.
@@ -57,7 +58,7 @@ static void Product32 (void)
 }
 
 static void Product16 (void)
-{   uint32_t lectura;
+{   volatile uint32_t lectura;
     
     uint16_t vectorIn[1000];
     uint16_t vectorOut[1000];
@@ -80,7 +81,7 @@ static void Product16 (void)
 
 
 static void Product12 (void)
-{   uint32_t lectura;
+{   volatile uint32_t lectura;
     
     uint16_t vectorIn[1000];
     uint16_t vectorOut[1000];
@@ -101,6 +102,51 @@ static void Product12 (void)
     DisableCycleCounter();
 }
 
+
+static void MovingAverage(void) {
+    volatile uint32_t asm_counts = 0;
+    volatile uint32_t c_counts = 0;
+    uint16_t vectorIn[1000];
+    uint16_t vectorOut[1000];
+    uint32_t i;
+    for (i = 0; i < 1000; ++i) {
+        vectorIn[i] = i;
+        vectorOut[i] = 0;
+    }
+
+    EnableCycleCounter();
+    ResetCycleCounter();
+    asm_filtroVentana10(vectorIn, vectorOut, 1000);
+    asm_counts = GetCycleCounter();
+    ResetCycleCounter();
+    c_filtroVentana10(vectorIn, vectorOut, 1000);
+    c_counts = GetCycleCounter();
+    ResetCycleCounter();
+    DisableCycleCounter();
+
+}
+
+static void pack32to16(void) {
+    volatile uint32_t asm_counts = 0;
+    volatile uint32_t c_counts = 0;
+    uint32_t vectorIn[1000];
+    uint16_t vectorOut[1000];
+    uint32_t i;
+    for (i = 0; i < 1000; ++i) {
+        vectorIn[i] = i;
+        vectorOut[i] = 0;
+    }
+
+    EnableCycleCounter();
+    ResetCycleCounter();
+    asm_pack32to16(vectorIn, vectorOut, 1000);
+    asm_counts = GetCycleCounter();
+    ResetCycleCounter();
+    c_pack32to16(vectorIn, vectorOut, 1000);
+    c_counts = GetCycleCounter();
+    ResetCycleCounter();
+    DisableCycleCounter();
+}
 static void Suma (void)
 {
     const uint32_t A = 20;

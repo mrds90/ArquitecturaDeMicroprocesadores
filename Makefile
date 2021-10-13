@@ -34,7 +34,7 @@ ifeq ($(SEMIHOST),y)
 LDFLAGS+=--specs=rdimon.specs
 endif
 
-CROSS=~/CIAA_Software_1.1-linux-x64/tools/gcc-arm-embedded/bin/arm-none-eabi-
+CROSS=~/CIAA/CIAA_Software_1.1-linux-x64/tools/gcc-arm-embedded/bin/arm-none-eabi-
 # CROSS=arm-none-eabi-
 CC=$(CROSS)gcc
 AS=$(CROSS)gcc

@@ -9,6 +9,8 @@
 .global asm_productoEscalar32
 .global asm_productoEscalar16
 .global asm_productoEscalar12
+.global asm_filtroVentana10
+.global asm_pack32to16
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -129,13 +131,73 @@
 		push {r4}
 
 	.productoEscalar12_loop:
-		ldrh	r4,[r0],2	                @ r4 = r0* ; r0*+2
+		ldrh	r4,[r0],2	                @ r4 = *r0 ; r0+2
 		mul		r4,r3		                @ r4 = r4 * r3
-        usat    r4,12,r4                    @ r4 = r4 & 0xFFF
-		strh	r4,[r1],2	                @ r1* = r4 ; r1*+2
+        usat    r4,12,r4                    @ r4 = (r4 > 0xFFF)?0xFFF:r4
+		strh	r4,[r1],2	                @ r1* = r4 ; *r1+2
 		subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
 		bne		.productoEscalar12_loop	    @ salir si longitud == 0
 
 		pop {r4}
 
 		bx lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_filtroVentana10 (uint16_t * vectorIn, uint16_t * vectorOut, uint32_t longitudVectorIn);
+@
+.thumb_func
+	asm_filtroVentana10:
+        @ Registros usados
+        @ r0: vectorIn
+        @ r1: vectorOut
+        @ r2: longitudVectorIn
+        push {r3} @acumulador
+        push {r4} @variable que contiene el dato actual  
+        push {r5} @contador y dividendo
+        push {r6} @variable donde guardo temporalmente la division
+        mov     r3,#0    @ r3 = 0x000 inicio el acumulador
+        mov     r5,#0    @ r5 = 0x000 inicio el contador
+    .filtroVentana10_loop:
+        ldrh	r4,[r0],2    @ r4 = *r0 ; r0+2
+        add     r3,r4        @ r3 = r4 + r3
+        cmp     r5,#10       @ r5 == 10
+        beq     .filtroVentana10_jump_increment @ satura en 10 el contador que se usa posteriormente como dividendo
+        add     r5,#1        @ r5 = r5 + 1
+    .filtroVentana10_jump_increment:
+        cmp     r5,#10       @ r5 == 10
+        bne     .filtroVentana10_window_not_full @if (r5 <10) goto window_not_full
+        ldrh    r4,[r0,-20]  @ r4 = *(r0-20) ; r0-20
+        subs    r3,r4        @ r3 = r3 - r4
+        add     r0,#20       @ r0 = r0 + 20
+    .filtroVentana10_window_not_full:
+        sdiv    r6,r3,r5    @ r1 = r3 / r5 donde r5 incremeneta hasta 10 y ahi queda cuando se llena la ventana
+        strh    r6,[r1],2    @ r1* = r6 ; r1+2   
+        subs    r2,#1        @ r2 = r2 - 1
+        bne     .filtroVentana10_loop @ salir si longitudVectorIn == 0
+        pop {r6}
+        pop {r5}
+        pop {r4}
+        bx  lr
+
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ Prototipo en "C":
+@ void asm_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud);
+@
+.thumb_func
+	asm_pack32to16:        
+        @ Registros usados
+        @ r0: vectorIn
+        @ r1: vectorOut
+        @ r2: longitud
+        add     r0,#2
+    .pack32to16_loop:
+        ldr     r4,[r0],4    @ r4 = *r0 ; r0+2
+        strh    r4,[r1],2    @ r1* = r4 ; r1+2
+        subs    r2,#1        @ r2 = r2 - 1
+        bne     .pack32to16_loop @ salir si longitud == 0
+        bx  lr
+    
+        
+        
