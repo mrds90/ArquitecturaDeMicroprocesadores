@@ -56,3 +56,23 @@ void c_pack32to16 (int32_t * vectorIn, int16_t *vectorOut, uint32_t longitud){
         vectorOut[i] = vectorIn[i] >> 16;
     }
 }
+
+int32_t c_max (int32_t * vectorIn, uint32_t longitud) {
+    int32_t max = vectorIn[0];
+    uint32_t i;
+    for (i = 1; i < longitud; i++) {
+        if (vectorIn[i] > max) {
+            max = vectorIn[i];
+        }
+    }
+    return max;
+}
+
+void c_invertir (uint16_t * vector, uint32_t longitud) {
+    uint32_t i;
+    for (i = 0; i < longitud/2; i++) {
+        uint16_t aux = vector[i];
+        vector[i] = vector[longitud-1-i];
+        vector[longitud-1-i] = aux;
+    }
+}

@@ -147,6 +147,46 @@ static void pack32to16(void) {
     ResetCycleCounter();
     DisableCycleCounter();
 }
+
+static void Max (void) {
+    volatile uint32_t asm_counts = 0;
+    volatile uint32_t c_counts = 0;
+    int16_t c_result;
+    int16_t asm_result;
+    uint32_t vectorIn[1000];
+    uint32_t i;
+    for (i = 0; i < 1000; ++i) {
+        vectorIn[i] = i;
+    }
+    EnableCycleCounter();
+    ResetCycleCounter();
+    asm_result = asm_max(vectorIn, 1000);
+    asm_counts = GetCycleCounter();
+    ResetCycleCounter();
+    c_result = c_max(vectorIn, 1000);
+    c_counts = GetCycleCounter();
+    ResetCycleCounter();
+    DisableCycleCounter();
+}
+
+static void invertir (void) {
+    volatile uint32_t asm_counts = 0;
+    volatile uint32_t c_counts = 0;
+    uint16_t vectorIn[1000];
+    uint32_t i;
+    for (i = 0; i < 1000; ++i) {
+        vectorIn[i] = i;
+    }
+    EnableCycleCounter();
+    ResetCycleCounter();
+    asm_invertir(vectorIn, 1000);
+    asm_counts = GetCycleCounter();
+    ResetCycleCounter();
+    c_invertir(vectorIn, 1000);
+    c_counts = GetCycleCounter();
+    ResetCycleCounter();
+    DisableCycleCounter();
+}
 static void Suma (void)
 {
     const uint32_t A = 20;

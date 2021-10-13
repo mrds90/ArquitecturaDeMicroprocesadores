@@ -11,6 +11,8 @@
 .global asm_productoEscalar12
 .global asm_filtroVentana10
 .global asm_pack32to16
+.global asm_max
+.global asm_invertir
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -198,6 +200,51 @@
         subs    r2,#1        @ r2 = r2 - 1
         bne     .pack32to16_loop @ salir si longitud == 0
         bx  lr
-    
-        
-        
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   
+@ Prototipo en "C":
+@ int32_t asm_max (int32_t * vectorIn, uint32_t longitud);
+@
+.thumb_func
+    asm_max:
+        @ Registros usados
+        @ r0: vectorIn
+        @ r2: longitud
+        ldr     r3,[r0]      @ r3 = *r0;
+        mov     r4,#0        @ r4 = 0x000
+    .max_loop:
+        ldr     r4,[r0],4    @ r4 = *r0 ; r0++
+        cmp     r4,r3        @ r4 > r3?
+        bgt     .max_jump_1  @ if (r4 > r3) goto max_jump_1
+        mov     r3,r4        @ r3 = r4
+    .max_jump_1:
+        subs    r2,#1        @ r2 = r2 - 1
+        bne     .max_loop    @ salir si longitud == 0
+        mov     r0,r3        @ r0 = r3
+        bx      lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   
+@ Prototipo en "C":
+@ void asm_invertir (uint16_t * vector, uint32_t longitud);
+@
+.thumb_func
+    asm_invertir:
+        @ Registros usados
+        @ r0: vector
+        @ r2: longitud
+        push   {r4}
+        mov    r3,#2        @ r3 = 0x000
+        mul    r2,r3        @ r2 = 2*longitud //para que este en bytes
+    .asm_invertir_loop:
+        ldr    r3,[r0]      @ r3 = *r0;
+        ldr    r4,[r0,r2]   @  r4 = *(r0+salto) ; r0+salto
+        str    r3,[r0]      @ *r0 = r3 
+        sub    r0,r2        @ r0 = r0 - salto
+        str    r4,[r0],2    @ *(r0) = r4 ; r0+2
+        subs   r2,#4        @ r2 = r2 - 4
+        cmp    r2,#0        @ r2 > 0?
+        bhi    .asm_invertir_loop @ salir si longitud == 0
+        pop    {r4}
+        bx     lr
+
+
