@@ -108,6 +108,7 @@ static void MovingAverage(void) {
     volatile uint32_t c_counts = 0;
     uint16_t vectorIn[1000];
     uint16_t vectorOut[1000];
+    uint16_t vectorOut2[1000];
     uint32_t i;
     for (i = 0; i < 1000; ++i) {
         vectorIn[i] = i;
@@ -119,7 +120,7 @@ static void MovingAverage(void) {
     asm_filtroVentana10(vectorIn, vectorOut, 1000);
     asm_counts = GetCycleCounter();
     ResetCycleCounter();
-    c_filtroVentana10(vectorIn, vectorOut, 1000);
+    c_filtroVentana10(vectorIn, vectorOut2, 1000);
     c_counts = GetCycleCounter();
     ResetCycleCounter();
     DisableCycleCounter();
@@ -169,20 +170,20 @@ static void Max (void) {
     DisableCycleCounter();
 }
 
-static void invertir (void) {
+static void Invertir (void) {
     volatile uint32_t asm_counts = 0;
     volatile uint32_t c_counts = 0;
-    uint16_t vectorIn[1000];
+    uint16_t vectorIn[50];
     uint32_t i;
-    for (i = 0; i < 1000; ++i) {
+    for (i = 0; i < 50; ++i) {
         vectorIn[i] = i;
     }
     EnableCycleCounter();
     ResetCycleCounter();
-    asm_invertir(vectorIn, 1000);
+    asm_invertir(vectorIn, 50);
     asm_counts = GetCycleCounter();
     ResetCycleCounter();
-    c_invertir(vectorIn, 1000);
+    c_invertir(vectorIn, 50);
     c_counts = GetCycleCounter();
     ResetCycleCounter();
     DisableCycleCounter();
@@ -304,8 +305,8 @@ int main (void)
 
     // Zeros();
     // Suma ();
-    Product16();
-
+    // MovingAverage();
+    Invertir();
     PrivilegiosSVC ();
 
     LlamandoAMalloc ();

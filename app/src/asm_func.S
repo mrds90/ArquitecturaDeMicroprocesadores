@@ -169,9 +169,9 @@
     .filtroVentana10_jump_increment:
         cmp     r5,#10       @ r5 == 10
         bne     .filtroVentana10_window_not_full @if (r5 <10) goto window_not_full
-        ldrh    r4,[r0,-20]  @ r4 = *(r0-20) ; r0-20
+        ldrh    r4,[r0,-20]  @ r4 = *(r0-20)
         subs    r3,r4        @ r3 = r3 - r4
-        add     r0,#20       @ r0 = r0 + 20
+        @add     r0,#20       @ r0 = r0 + 20
     .filtroVentana10_window_not_full:
         sdiv    r6,r3,r5    @ r1 = r3 / r5 donde r5 incremeneta hasta 10 y ahi queda cuando se llena la ventana
         strh    r6,[r1],2    @ r1* = r6 ; r1+2   
@@ -231,20 +231,18 @@
     asm_invertir:
         @ Registros usados
         @ r0: vector
-        @ r2: longitud
-        push   {r4}
-        mov    r3,#2        @ r3 = 0x000
-        mul    r2,r3        @ r2 = 2*longitud //para que este en bytes
+        @ r1: longitud
+        mov     r2,#2        @ r2 = 0x000
+        sub     r1,#1        @ salto = longitud - 1 
+        mul     r1,r2        @ r1 = 2*salto //para que este en bytes
     .asm_invertir_loop:
-        ldr    r3,[r0]      @ r3 = *r0;
-        ldr    r4,[r0,r2]   @  r4 = *(r0+salto) ; r0+salto
-        str    r3,[r0]      @ *r0 = r3 
-        sub    r0,r2        @ r0 = r0 - salto
-        str    r4,[r0],2    @ *(r0) = r4 ; r0+2
-        subs   r2,#4        @ r2 = r2 - 4
-        cmp    r2,#0        @ r2 > 0?
-        bhi    .asm_invertir_loop @ salir si longitud == 0
-        pop    {r4}
-        bx     lr
+        ldrh    r2,[r0]      @ r2 = *r0;
+        ldrh    r3,[r0,r1]   @ r3 = *(r0+salto)
+        strh    r2,[r0,r1] @ *(r0+salto) = r2 ;
+        strh    r3,[r0],2    @ *(r0) = r3 ; r0+2
+        subs    r1,#4        @ r1 = r1 - 4
+        cmp     r1,#0        @ r1 > 0?
+        bgt     .asm_invertir_loop @ salir si longitud == 0
+        bx      lr
 
 
