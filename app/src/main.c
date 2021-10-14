@@ -132,9 +132,10 @@ static void pack32to16(void) {
     volatile uint32_t c_counts = 0;
     uint32_t vectorIn[1000];
     uint16_t vectorOut[1000];
+    uint16_t vectorOut2[1000];
     uint32_t i;
     for (i = 0; i < 1000; ++i) {
-        vectorIn[i] = i;
+        vectorIn[i] = i << 16;
         vectorOut[i] = 0;
     }
 
@@ -143,7 +144,7 @@ static void pack32to16(void) {
     asm_pack32to16(vectorIn, vectorOut, 1000);
     asm_counts = GetCycleCounter();
     ResetCycleCounter();
-    c_pack32to16(vectorIn, vectorOut, 1000);
+    c_pack32to16(vectorIn, vectorOut2, 1000);
     c_counts = GetCycleCounter();
     ResetCycleCounter();
     DisableCycleCounter();
@@ -154,10 +155,10 @@ static void Max (void) {
     volatile uint32_t c_counts = 0;
     int16_t c_result;
     int16_t asm_result;
-    uint32_t vectorIn[1000];
+    int32_t vectorIn[1000];
     uint32_t i;
     for (i = 0; i < 1000; ++i) {
-        vectorIn[i] = i;
+        vectorIn[i] = i * (1000 - i);
     }
     EnableCycleCounter();
     ResetCycleCounter();
@@ -306,7 +307,9 @@ int main (void)
     // Zeros();
     // Suma ();
     // MovingAverage();
-    Invertir();
+    // pack32to16();
+    Max();
+    // Invertir();
     PrivilegiosSVC ();
 
     LlamandoAMalloc ();

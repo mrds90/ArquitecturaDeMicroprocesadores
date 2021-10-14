@@ -210,15 +210,18 @@
         @ Registros usados
         @ r0: vectorIn
         @ r2: longitud
+
+        @r3: max
+        @r4: dato actual
         ldr     r3,[r0]      @ r3 = *r0;
         mov     r4,#0        @ r4 = 0x000
     .max_loop:
         ldr     r4,[r0],4    @ r4 = *r0 ; r0++
-        cmp     r4,r3        @ r4 > r3?
-        bgt     .max_jump_1  @ if (r4 > r3) goto max_jump_1
+        cmp     r3,r4        @ r3 > r4?
+        bgt     .max_jump_1  @ if (r3 > r4) goto max_jump_1
         mov     r3,r4        @ r3 = r4
     .max_jump_1:
-        subs    r2,#1        @ r2 = r2 - 1
+        subs    r1,#1        @ r1 = r1 - 1
         bne     .max_loop    @ salir si longitud == 0
         mov     r0,r3        @ r0 = r3
         bx      lr
