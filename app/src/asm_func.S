@@ -167,13 +167,12 @@
         beq     .filtroVentana10_jump_increment @ satura en 10 el contador que se usa posteriormente como dividendo
         add     r5,#1        @ r5 = r5 + 1
     .filtroVentana10_jump_increment:
-        cmp     r5,#10       @ r5 == 10
+        cmp     r5,#10       @ r5 == 10?
         bne     .filtroVentana10_window_not_full @if (r5 <10) goto window_not_full
-        ldrh    r4,[r0,-20]  @ r4 = *(r0-20)
-        subs    r3,r4        @ r3 = r3 - r4
-        @add     r0,#20       @ r0 = r0 + 20
+        ldrh    r4,[r0,-20]  @ r4 = *(r0-20) cargo el elemento mas antiguo de la ventana
+        subs    r3,r4        @ r3 = r3 - r4  resto al elemento mas antiguo del acumulador
     .filtroVentana10_window_not_full:
-        sdiv    r6,r3,r5    @ r1 = r3 / r5 donde r5 incremeneta hasta 10 y ahi queda cuando se llena la ventana
+        sdiv    r6,r3,r5     @ r6 = r3 / r5 donde r5 incremeneta hasta 10 y ahi queda cuando se llena la ventana
         strh    r6,[r1],2    @ r1* = r6 ; r1+2   
         subs    r2,#1        @ r2 = r2 - 1
         bne     .filtroVentana10_loop @ salir si longitudVectorIn == 0

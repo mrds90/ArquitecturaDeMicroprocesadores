@@ -2,6 +2,10 @@
 
 #define MASK_12_BIT       0x00000FFFUL
 #define Saturate12Bit(x)  x > MASK_12_BIT ? MASK_12_BIT : x
+#define SAMPLE_RATE     44100
+#define ECHO_DELAY      20/1000
+#define SAMPLE_DELAY    (SAMPLE_RATE*ECHO_DELAY)
+#define HALF_GAIN(x)     (x>>1)
 
 uint32_t c_sum (uint32_t firstOperand, uint32_t secondOperand)
 {
@@ -74,5 +78,11 @@ void c_invertir (uint16_t * vector, uint32_t longitud) {
         uint16_t aux = vector[i];
         vector[i] = vector[longitud-1-i];
         vector[longitud-1-i] = aux;
+    }
+}
+
+void c_eco(int16_t * vector, uint32_t longitud) {
+    for(uint32_t i = SAMPLE_DELAY; i < longitud; i++){
+        vector[i] += HALF_GAIN(vector[i - SAMPLE_DELAY]);
     }
 }
