@@ -82,7 +82,6 @@ static void Product16 (void)
 
 static void Product12 (void)
 {   volatile uint32_t lectura;
-    
     uint16_t vectorIn[1000];
     uint16_t vectorOut[1000];
     uint32_t i;
