@@ -13,6 +13,7 @@
 .global asm_pack32to16
 .global asm_max
 .global asm_invertir
+.global asm_eco
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -246,5 +247,33 @@
         cmp     r1,#0        @ r1 > 0?
         bgt     .asm_invertir_loop @ salir si longitud == 0
         bx      lr
+
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   
+@ Prototipo en "C":
+@ void eco (uint16_t * vector);
+@
+
+.thumb_func
+    asm_eco:
+        @ Registros usados
+        @ r0: vector
+        push  {r4}
+        mov   r1,#1607      @ r1: Contador (4096 - 882)/2
+        mov   r2,#0         @ r2: Para dividir por 2 con SIMD
+        .asm_eco_loop:
+        ldr   r3,[r0]       @ r3 = *r0;
+        ldr   r4,[r0,#1764]  @ r4 = *r0;
+        shadd16 r3,r3,r2
+        sadd16 r4,r3,r4
+        str   r4,[r0,#1764] @ *r0 = r4;
+        add   r0,#4         @ r0 = r0 + 4
+        subs  r1,#1          @ r1 = r1 - 1
+        bne   .asm_eco_loop  @ salir si r1 == 0
+        pop   {r4}
+        bx    lr
+
+
+
+
 
 

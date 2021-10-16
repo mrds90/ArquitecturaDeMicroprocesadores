@@ -81,8 +81,8 @@ void c_invertir (uint16_t * vector, uint32_t longitud) {
     }
 }
 
-void c_eco(int16_t * vector, uint32_t longitud) {
-    for(uint32_t i = SAMPLE_DELAY; i < longitud; i++){
+void c_eco(int16_t * vector) {
+    for(uint32_t i = SAMPLE_DELAY; i < 4096; i++) {
         vector[i] += HALF_GAIN(vector[i - SAMPLE_DELAY]);
     }
 }

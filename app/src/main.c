@@ -188,6 +188,30 @@ static void Invertir (void) {
     ResetCycleCounter();
     DisableCycleCounter();
 }
+
+static void eco(void) {
+    volatile uint32_t asm_counts = 0;
+    volatile uint32_t c_counts = 0;
+    uint16_t vectorAsm[4096];
+    uint16_t vectorC[4096];
+    uint32_t i;
+    for (i = 0; i < 4096; ++i) {
+        vectorAsm[i] = i;
+        vectorC[i] = i;
+    }
+    EnableCycleCounter();
+    ResetCycleCounter();
+    asm_eco(vectorAsm);
+    asm_counts = GetCycleCounter();
+    ResetCycleCounter();
+    c_eco(vectorC);
+    c_counts = GetCycleCounter();
+    ResetCycleCounter();
+    DisableCycleCounter();
+}
+
+
+
 static void Suma (void)
 {
     const uint32_t A = 20;
@@ -307,7 +331,8 @@ int main (void)
     // Suma ();
     // MovingAverage();
     // pack32to16();
-    Max();
+//    Max();
+    eco();
     // Invertir();
     PrivilegiosSVC ();
 
