@@ -107,9 +107,11 @@ MOVEQ r5,#3
     - Separar procesos
     - Establecer reglas de acceso.
 
-19.  ¿Cuántas regiones pueden configurarse como máximo? ¿Qué ocurre en caso de haber solapamientos de las regiones? ¿Qué ocurre con las zonas de memoria no cubiertas por las regiones definidas?
-    
-    Se pueden configurar hasta 8 regiones. En caso de haber solapamientos la región es accesible para la ultima región definida. Las zonas de memoria no definidas son accesibles en modo privilegiado. Puede configurarse para que sean accesible en modo no privilegiado.
+19. ¿Cuántas regiones pueden configurarse como máximo? ¿Qué ocurre en caso de haber solapamientos de las regiones? ¿Qué ocurre con las zonas de memoria no cubiertas por las regiones definidas?
+
+    - Se pueden configurar hasta 8 regiones. 
+    - En caso de haber solapamientos la región es accesible para la ultima región definida.
+    - Las zonas de memoria no definidas son accesibles en modo privilegiado. Puede configurarse para que sean accesible en modo no privilegiado.
 
 20. PendSV
     
@@ -121,7 +123,7 @@ MOVEQ r5,#3
     
     Esto permite proveer de un sistema mas robusto al prevenir que las aplicaciones de usuario acceda directamente al hardware.
 
-[!alt text](https://ars.els-cdn.com/content/image/3-s2.0-B9781856179638000107-f07-15.jpg)
+![alt text](https://ars.els-cdn.com/content/image/3-s2.0-B9781856179638000107-f07-15.jpg)
 
 
 
@@ -137,10 +139,10 @@ MOVEQ r5,#3
     ejemplo:
 ```
 .productoEscalar16_loop:
-    ldrh	r4,[r0],2	                @ r4 = r0* ; r0*+2
-    mul		r4,r3		                @ r4 = r4 * r3
-    strh    r4,[r1],2	            @ r1* = r4 ; r1*+2
-    subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
+    ldrh	r4,[r0],                    @ r4 = r0* ; r0*+2
+    mul		r4,r3		            @ r4 = r4 * r3
+    strh        r4,[r1],2	            @ r1* = r4 ; r1*+2
+    subs	r2,1		            @ r2 = r2-1 con s actualizamos los flags
     bne		.productoEscalar16_loop	    @ salir si longitud == 0
 ```
 3. Aritmetica saturada
@@ -151,11 +153,11 @@ ejemplo 8 bit:
 ```
 .productoEscalar8_loop:
 	ldrh	r4,[r0],2	                @ r4 = *r0 ; r0+2
-	mul		r4,r3		                @ r4 = r4 * r3
-     usat    r4,8,r4                     @ r4 = (r4 > 0xFF)?0xFF:r4 ;r4 = (r4 < 0)?0:r4
+	mul	r4,r3		                @ r4 = r4 * r3
+        usat    r4,8,r4                         @ r4 = (r4 > 0xFF)?0xFF:r4 ;r4 = (r4 < 0)?0:r4
 	strh	r4,[r1],2	                @ r1* = r4 ; *r1+2
 	subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
-	bne		.productoEscalar8_loop	    @ salir si longitud == 0
+	bne	.productoEscalar8_loop	        @ salir si longitud == 0
 ```
 
 4. Interfaz Asm y C.
