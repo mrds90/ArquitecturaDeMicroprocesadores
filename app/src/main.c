@@ -117,10 +117,10 @@ static void MovingAverage(void) {
     EnableCycleCounter();
     ResetCycleCounter();
     asm_filtroVentana10(vectorIn, vectorOut, 1000);
-    asm_counts = GetCycleCounter();
+    asm_counts = GetCycleCounter(); //18778
     ResetCycleCounter();
     c_filtroVentana10(vectorIn, vectorOut2, 1000);
-    c_counts = GetCycleCounter();
+    c_counts = GetCycleCounter();   //60943
     ResetCycleCounter();
     DisableCycleCounter();
 
@@ -329,10 +329,10 @@ int main (void)
 
     // Zeros();
     // Suma ();
-    // MovingAverage();
+     MovingAverage();
     // pack32to16();
 //    Max();
-    eco();
+//    eco();
     // Invertir();
     PrivilegiosSVC ();
 

@@ -61,13 +61,13 @@
 @
 .thumb_func
     asm_zeros:
-        mov r2, 0               @ r2 = 0 para tener un cero disponible en un registro
+        mov  r2, 0               @ r2 = 0 para tener un cero disponible en un registro
     .asm_zero_loop:
-        str r2,[r0],4           @ vector[i] = 0 ó *vector++ = 0
+        str  r2,[r0],4           @ vector[i] = 0 ó *vector++ = 0
         subs r1, #1             @ longitud--
-        bne .asm_zero_loop      @ salir si longitud == 0, saltar su es distinto de 0
+        bne  .asm_zero_loop      @ salir si longitud == 0, saltar su es distinto de 0
 
-        bx lr                   @ vuelve adonde fue llamada
+        bx   lr                   @ vuelve adonde fue llamada
 
     
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -83,15 +83,15 @@
 @
 .thumb_func
     asm_productoEscalar32:
-        push {r4}               @ r2 = 0 para tener un cero disponible en un registro
+        push {r4}             @ r2 = 0 para tener un cero disponible en un registro
     .asm_product_loop:
-        ldr r4,[r0], #4       @ vectorIn++
-        mul r4, r3, r4        @ vectorOut[i] = escalar * vectorIn[i]
-        str r4,[r1],4         @ vector[i] = 0 ó *vector++ = 0
+        ldr  r4,[r0], #4       @ vectorIn++
+        mul  r4, r3, r4        @ vectorOut[i] = escalar * vectorIn[i]
+        str  r4,[r1],4         @ vector[i] = 0 ó *vector++ = 0
         subs r2, #1           @ longitud--
         bne .asm_product_loop @ salir si longitud == 0
-        pop {r4}
-        bx lr                 @ vuelve adonde fue llamada
+        pop  {r4}
+        bx   lr                 @ vuelve adonde fue llamada
 
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -109,15 +109,15 @@
 		push {r4}
 
 	.productoEscalar16_loop:
-		ldrh	r4,[r0],2	                @ r4 = r0* ; r0*+2
-		mul		r4,r3		                @ r4 = r4 * r3
-		strh		r4,[r1],2	                @ r1* = r4 ; r1*+2
-		subs	r2,1		                @ r2 = r2-1 con s actualizamos los flags
-		bne		.productoEscalar16_loop	    @ salir si longitud == 0
+		ldrh r4,[r0],2	                @ r4 = r0* ; r0*+2
+		mul	 r4,r3		                @ r4 = r4 * r3
+		strh r4,[r1],2	                @ r1* = r4 ; r1*+2
+		subs r2,1		                @ r2 = r2-1 con s actualizamos los flags
+		bne	 .productoEscalar16_loop	    @ salir si longitud == 0
 
-		pop {r4}
+		pop  {r4}
 
-		bx lr
+		bx   lr
 
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @ Prototipo en "C":
@@ -165,14 +165,10 @@
         ldrh	r4,[r0],2    @ r4 = *r0 ; r0+2
         add     r3,r4        @ r3 = r4 + r3
         cmp     r5,#10       @ r5 == 10
-        beq     .filtroVentana10_jump_increment @ satura en 10 el contador que se usa posteriormente como dividendo
-        add     r5,#1        @ r5 = r5 + 1
-    .filtroVentana10_jump_increment:
-        cmp     r5,#10       @ r5 == 10?
-        bne     .filtroVentana10_window_not_full @if (r5 <10) goto window_not_full
-        ldrh    r4,[r0,-20]  @ r4 = *(r0-20) cargo el elemento mas antiguo de la ventana
-        subs    r3,r4        @ r3 = r3 - r4  resto al elemento mas antiguo del acumulador
-    .filtroVentana10_window_not_full:
+        itee    ne           @ r5 == 10
+        addne   r5,#1        @ r5 = r5 + 1 //satura en 10
+        ldrheq  r4,[r0,-20]  @ r4 = *(r0-20) cargo el elemento mas antiguo de la ventana
+        subseq  r3,r4        @ r3 = r3 - r4  resto al elemento mas antiguo del acumulador
         sdiv    r6,r3,r5     @ r6 = r3 / r5 donde r5 incremeneta hasta 10 y ahi queda cuando se llena la ventana
         strh    r6,[r1],2    @ r1* = r6 ; r1+2   
         subs    r2,#1        @ r2 = r2 - 1
